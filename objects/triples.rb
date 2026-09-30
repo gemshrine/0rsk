@@ -41,8 +41,10 @@ class Rsk::Triples
   end
 
   def delete(id)
+    id = Integer(id)
+    raise(Rsk::Urror, "The triple ID must be positive: #{id}") unless id.positive?
     @pgsql.transaction do |t|
-      triple = fetch(id: Integer(id))[0]
+      triple = fetch(id:)
       raise(Rsk::Urror, "Triple ##{id} not found in your project ##{@project}") if triple.nil?
       if t.exec('SELECT * FROM part WHERE id = $1 AND project = $2', [triple[:cid], @project]).empty?
         raise(Rsk::Urror, "Triple ##{id} is not in your project ##{@project}")

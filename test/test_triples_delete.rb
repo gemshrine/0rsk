@@ -11,6 +11,13 @@ require_relative '../objects/plans'
 require_relative '../objects/triples'
 
 class Rsk::TriplesDeleteTest < TestCase
+  def test_rejects_non_positive_ids_without_fetching_another_triple
+    triples = Rsk::Triples.new(nil, 1)
+    [0, -1].each do |id|
+      assert_raises(Rsk::Urror) { triples.delete(id) }
+    end
+  end
+
   def test_leaves_no_plan_behind
     project = test_project
     risk = test_risk(project: project)
